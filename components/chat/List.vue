@@ -42,7 +42,10 @@
             <q-item clickable>
               <q-item-section>Settings</q-item-section>
             </q-item>
-            <q-item clickable>
+            <q-item
+              clickable
+              @click="logout()"
+            >
               <q-item-section>Logout</q-item-section>
             </q-item>
           </q-list>
@@ -122,12 +125,24 @@
 </template>
 
 <script setup>
+import { useFirebaseAuth } from 'vuefire'
+import { signOut } from 'firebase/auth'
 import { storeToRefs } from 'pinia'
 import { useChatStore } from '@/stores/chat'
 import { useLayoutStore } from '@/stores/layout'
 
+const auth = useFirebaseAuth()
 const chatStore = useChatStore()
 const layoutStore = useLayoutStore()
 const { conversations, currentConversationIndex, search } = storeToRefs(chatStore)
 const { isChatListOpen } = storeToRefs(layoutStore)
+
+const logout = async () => {
+  try {
+    await signOut(auth)
+    navigateTo('/login')
+  } catch (e) {
+    // Do nothing
+  }
+}
 </script>

@@ -47,3 +47,7 @@
   width: 2em;
 }
 </style>
+
+<script setup>
+definePageMeta({ middleware: ['auth'] })
+</script>
