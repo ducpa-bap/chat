@@ -11,6 +11,13 @@
       <q-input
         dense
         outlined
+        v-model="name"
+        label="Name"
+      ></q-input>
+      <q-input
+        dense
+        outlined
+        class="q-mt-md"
         v-model="email"
         label="Email Address"
       ></q-input>
@@ -22,6 +29,14 @@
         type="password"
         label="Password"
       ></q-input>
+      <q-input
+        dense
+        outlined
+        class="q-mt-md"
+        v-model="confirmPassword"
+        type="password"
+        label="Password Confirm"
+      ></q-input>
     </q-card-section>
     <q-card-section>
       <q-btn
@@ -29,20 +44,20 @@
         color="dark"
         rounded
         size="md"
-        label="Sign in"
+        label="Sign up"
         no-caps
         class="full-width"
-        @click="login"
+        @click="register"
       ></q-btn>
     </q-card-section>
     <q-card-section class="text-center q-pt-none">
       <div class="text-grey-8">Don't have an account yet?
         <nuxt-link
-          to="register"
+          to="login"
           class="text-dark text-weight-bold"
           style="text-decoration: none"
         >
-          Sign up.
+          Login
         </nuxt-link>
       </div>
     </q-card-section>
@@ -51,8 +66,9 @@
 </template>
 
 <script setup>
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { useFirebaseAuth } from 'vuefire'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { getDoc, setDoc, doc } from 'firebase/firestore'
+import { useFirebaseAuth, useFirestore } from 'vuefire'
 
 definePageMeta({
   layout: 'guest',
@@ -60,13 +76,24 @@ definePageMeta({
 })
 
 const auth = useFirebaseAuth()
+const db = useFirestore()
 
+const name = ref('')
 const email = ref('')
 const password = ref('')
+const confirmPassword = ref('')
 
-const login = async () => {
+const register = async () => {
   try {
-    await signInWithEmailAndPassword(auth, email.value, password.value)
+    const { user } = await createUserWithEmailAndPassword(auth, email.value, password.value)
+    const docSnap = await getDoc(doc(db, 'users', user.uid))
+    if (!docSnap.exists()) {
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        name: name.value,
+        email: user.email
+      })
+    }
     navigateTo('/')
   } catch (error) {
     console.error(error)

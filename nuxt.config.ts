@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   spaLoadingTemplate: false,
   modules: [
     'nuxt-quasar-ui',
+    'dayjs-nuxt',
     '@pinia/nuxt'
   ],
   app: {

@@ -12,15 +12,29 @@
       <q-btn
         round
         flat
+        v-if="image"
       >
         <q-avatar>
-          <img :src="currentConversation.avatar">
+          <img :src="image">
         </q-avatar>
       </q-btn>
 
-      <span class="q-subtitle-1 q-pl-md">
-        {{ currentConversation.person }}
+      <q-skeleton
+        type="QAvatar"
+        v-else
+      />
+
+      <span
+        class="q-subtitle-1 q-pl-md"
+        v-if="name"
+      >
+        {{ name }}
       </span>
+
+      <q-skeleton
+        type="text"
+        v-else
+      />
 
       <q-space />
 
@@ -74,11 +88,11 @@
 </template>
 
 <script setup>
-import { storeToRefs } from 'pinia'
-import { useChatStore } from '@/stores/chat'
 import { useLayoutStore } from '@/stores/layout'
+import { useChatStore } from '@/stores/chat'
 
-const chatStore = useChatStore()
 const layoutStore = useLayoutStore()
-const { conversations, currentConversation } = storeToRefs(chatStore)
+const chatStore = useChatStore()
+
+const { name, image } = useRoomData(chatStore.currentRoom)
 </script>

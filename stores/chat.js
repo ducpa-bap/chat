@@ -5,49 +5,34 @@ export const useChatStore = defineStore('chat', {
     return {
       message: '',
       search: '',
-      conversations: [
-        {
-          id: 1,
-          person: 'Razvan Stoenescu',
-          avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
-          caption: 'I\'m working on Quasar!',
-          time: '15:00',
-          sent: true
-        },
-        {
-          id: 2,
-          person: 'Dan Popescu',
-          avatar: 'https://cdn.quasar.dev/team/dan_popescu.jpg',
-          caption: 'I\'m working on Quasar!',
-          time: '16:00',
-          sent: true
-        },
-        {
-          id: 3,
-          person: 'Jeff Galbraith',
-          avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-          caption: 'I\'m working on Quasar!',
-          time: '18:00',
-          sent: true
-        },
-        {
-          id: 4,
-          person: 'Allan Gaunt',
-          avatar: 'https://cdn.quasar.dev/team/allan_gaunt.png',
-          caption: 'I\'m working on Quasar!',
-          time: '17:00',
-          sent: true
-        }
-      ],
-      currentConversationIndex: 0
+      rooms: [],
+      currentRoomId: null
     }
   },
   getters: {
-    currentConversation: state => state.conversations[state.currentConversationIndex]
+    currentRoom: state => state.currentRoomId !== null ? state.rooms.find(item => item.id === state.currentRoomId) : null
   },
   actions: {
-    setCurrentConversationIndex(index) {
-      this.currentConversationIndex = index
+    setCurrentRoomId(roomId) {
+      this.currentRoomId = roomId
+    },
+    setRooms(rooms) {
+      this.rooms = rooms
+    },
+    addRoom(room) {
+      this.rooms.push(room)
+    },
+    findRoom(roomId) {
+      return this.rooms.find(item => item.id === roomId)
+    },
+    updateRoom(roomId, room) {
+      const index = this.rooms.findIndex(item => item.id === roomId)
+      if (index !== -1) {
+        this.rooms[index] = room
+      }
+    },
+    removeRoom(roomId) {
+      this.rooms = this.rooms.filter(item => item.id !== roomId)
     }
   }
 })
